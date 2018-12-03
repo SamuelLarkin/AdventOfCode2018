@@ -2,44 +2,18 @@
 
 from __future__ import print_function
 
-import re
-from collections import namedtuple
-from itertools import combinations
-from functools import reduce
+from reader import read_data
 import numpy as np
 
-
-
-DataBase = namedtuple('Data', ('id', 'left', 'top', 'width', 'height'))
-class Data(DataBase):
-    @property
-    def bottom(self):
-        return self.top + self.height - 1
-    @property
-    def right(self):
-        return self.left + self.width - 1
 
 
 def intersect(a, b):
     if a.right < b.left or b.right < a.left:
         return False
-    if a.bottom < b.top or b.bottom < a.top:
+    if a.top < b.bottom or b.top < a.bottom:
         return False
     return True
 
-
-
-def read_data(iterable):
-    # #1 @ 596,731: 11x27
-    data_re = re.compile(r'^#(\d+) @ (\d+),(\d+): (\d+)x(\d+)')
-
-    data = []
-    for l in iterable:
-        m = re.match(data_re, l.strip())
-        assert m, 'Error with the regular expression'
-        data.append(Data(*map(int, m.group(1,2,3,4,5))))
-
-    return data
 
 
 with open('data.txt', 'r') as f:

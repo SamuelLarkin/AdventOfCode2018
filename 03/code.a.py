@@ -2,35 +2,17 @@
 
 from __future__ import print_function
 
-import re
-from collections import namedtuple
-from itertools import combinations
 from functools import reduce
+from reader import read_data
 import numpy as np
 
 
-
-Data = namedtuple('Data', ('id', 'left', 'top', 'width', 'height'))
-
-
-
-
-def read_data(iterable):
-    # #1 @ 596,731: 11x27
-    data_re = re.compile(r'^#(\d+) @ (\d+),(\d+): (\d+)x(\d+)')
-
-    data = []
-    for l in iterable:
-        m = re.match(data_re, l.strip())
-        assert m, 'Error with the regular expression'
-        data.append(Data(*map(int, m.group(1,2,3,4,5))))
-
-    return data
+FABRIC_SIZE = 1000
 
 
 def mask(x):
-    m = np.zeros((1000,1000), dtype=np.int)
-    m[x.top:x.top+x.height, x.left:x.left+x.width] = 1
+    m = np.zeros((FABRIC_SIZE,FABRIC_SIZE), dtype=np.int)
+    m[x.bottom:x.top+1, x.left:x.right+1] = 1
     return m
 
 
@@ -43,7 +25,7 @@ if False:
     data = read_data(test)
 
 #print(data)
-bitmap = reduce(lambda accumulator, x: x + accumulator, map(mask, data), np.zeros((1000,1000), dtype=np.int))
+bitmap = reduce(lambda accumulator, x: x + accumulator, map(mask, data), np.zeros((FABRIC_SIZE,FABRIC_SIZE), dtype=np.int))
 answer = np.count_nonzero(bitmap > 1)
 
 print('Answer:', answer)
