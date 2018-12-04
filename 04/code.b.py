@@ -12,24 +12,18 @@ with open('data.txt','r') as f:
 
 print(data)
 
-sleep_parttern = defaultdict(lambda: np.zeros((60,), dtype=np.int))
-data2 = {}
-for guard_id, log_time in data.items():
-    for s, w in log_time:
-        mask = np.zeros((60,), dtype=np.int)
-        mask[s:w] = 1
-        sleep_parttern[guard_id] += mask
-    data2[guard_id] = {
-            'max': np.max(sleep_parttern[guard_id]),
-            'argmax': np.argmax(sleep_parttern[guard_id]),
-            }
-    print(sleep_parttern[guard_id])
-    print(data2[guard_id])
+guard = max(data.values(), key=lambda g: g.schedule.max)
+print(guard)
+#Datum(
+#   id=163,
+#   schedule=Schedule(schedule=array([ 0,  1,  2,  3,  3,  4,  4,  3,  3,  4,  5,  5,  6,  6,  6,  6,  6, 8,  9,  9, 10, 10, 11, 11, 11, 12, 13, 14, 16, 18, 17, 15, 13, 11, 10, 10, 10, 12, 11,  9, 10,  9,  9,  9,  9, 10,  9,  6,  8,  8,  7, 5,  5,  2,  1,  1,  1,  1,  0,  0]),
+#      max=18,
+#      argmax=29),
+#   log=[(3, 47), (17, 38), (5, 41), (12, 33), (1, 29), (45, 51), (2, 7), (10, 28), (22, 54), (27, 32), (49, 56), (26, 31), (37, 44), (48, 51), (28, 32), (25, 30), (40, 47), (18, 50), (9, 47), (28, 33), (37, 39), (48, 49), (29, 34), (43, 46), (52, 53), (56, 58), (17, 53), (28, 43), (24, 31), (29, 53), (20, 24), (29, 39), (44, 52)],
+#   total_sleeping_time=447,
+#   longest_nap=44)
 
-#print(sleep_parttern)
-#print(data2)
-answer = max(data2.items(), key=lambda a: a[1]['max'])
-print(answer)
 
-answer = answer[0] * answer[1]['argmax']
+answer = guard.id * guard.schedule.argmax
 print('Answer:', answer)
+# 4727

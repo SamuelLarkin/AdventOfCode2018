@@ -9,6 +9,17 @@
 
 import re
 from collections import defaultdict
+from collections import namedtuple
+import numpy as np
+
+Schedule = namedtuple('Schedule', ('schedule', 'max', 'argmax'))
+Datum = namedtuple('Datum', (
+    'id',
+    'schedule',
+    'log',
+    'total_sleeping_time',
+    'longest_nap',
+    ))
 
 def read_data(raw_data):
     date_re    = re.compile('\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}\]')
@@ -44,4 +55,29 @@ def read_data(raw_data):
         else:
             assert False, l
 
-    return data
+    full_data = {}
+    for guard_id, log_time in data.items():
+        #print(guard)
+        #print(log_time)
+        total_sleeping_time = sum(map(lambda t: t[1]-t[0], log_time))
+        longest_nap = max(map(lambda t: t[1]-t[0], log_time))
+        #print(total_sleeping_time, longest_nap)
+        #data2[guard] = (total_sleeping_time, longest_nap)
+
+        sleep_parttern = np.zeros((60,), dtype=np.int)
+        for s, w in log_time:
+            mask = np.zeros_like(sleep_parttern)
+            mask[s:w] = 1
+            sleep_parttern += mask
+        #print(sleep_parttern)
+        sleepiest_minute = np.argmax(sleep_parttern)
+
+        full_data[guard_id] = Datum(guard_id,
+                Schedule(sleep_parttern,
+                    np.max(sleep_parttern),
+                    np.argmax(sleep_parttern)),
+                log_time,
+                total_sleeping_time,
+                longest_nap)
+
+    return full_data
