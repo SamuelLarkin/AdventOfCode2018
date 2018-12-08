@@ -28,6 +28,19 @@ def parse_dependencies(f):
 
 
 
+def complete_graph(data):
+    # Convert from defaultdict to dict
+    data = dict(data)
+    # Ignore self dependencies
+    for k, v in data.items():
+        v.discard(k)
+    # Add node with no dependencies
+    # Make sure all node have a set of incoming edges, or an empty set for the starting nodes.
+    extra_items_in_deps = reduce(set.union, data.values()) - set(data.keys())
+    data.update({item:set() for item in extra_items_in_deps})
+
+    return data
+
 # https://rosettacode.org/wiki/Category:Python
 def topological_sort_generator(data):
     """
@@ -45,16 +58,7 @@ def topological_sort_generator(data):
     else
 	return L   (a topologically sorted order)
     """
-    # Convert from defaultdict to dict
-    data = dict(data)
-    # Ignore self dependencies
-    for k, v in data.items():
-        v.discard(k)
-    # Add node with no dependencies
-    # Make sure all node have a set of incoming edges, or an empty set for the starting nodes.
-    extra_items_in_deps = reduce(set.union, data.values()) - set(data.keys())
-    data.update({item:set() for item in extra_items_in_deps})
-
+    data = complete_graph(data)
     while True:
         #print('a', data)
         ordered = set(item for item,dep in data.items() if not dep)
