@@ -1,0 +1,7 @@
+[Critical Path Method](https://en.wikipedia.org/wiki/Critical_path_method)
+[Python Critical Path](https://pypi.org/project/criticalpath/)
+[Longest Path Method](https://en.wikipedia.org/wiki/Longest_path_problem)
+[Gantt Chart](https://en.wikipedia.org/wiki/Gantt_chart)
+[Dijkstra Algorithm](http://rosettacode.org/wiki/Dijkstra%27s_algorithm)
+[Critical Path Method Stanford](https://web.stanford.edu/class/cee320/CEE320B/CPM.pdf)
+[Using Modified Dijkstra’s Algorithm for Critical Path Method in a Project Network](https://www.researchgate.net/publication/268011501_Using_Modified_Dijkstra's_Algorithm_for_Critical_Path_Method_in_a_Project_Network)
