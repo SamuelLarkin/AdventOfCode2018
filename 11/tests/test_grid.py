@@ -2,7 +2,8 @@
 
 import unittest
 from utils import grid
-from utils import max_energy_coordinates
+from utils import max_energy
+from utils import partII
 import numpy as np
 
 np.set_printoptions(linewidth=400)
@@ -29,9 +30,30 @@ class TestGrid(unittest.TestCase):
         self.assertEqual(power_level[101-1,153-1], 4)
 
 
+
+class TestMaxPower3x3(unittest.TestCase):
     def test18(self):
         power_level = grid(grid_serial_number=18, size=300)
         #print(power_level.T[30:35, 44:49])
-        ind, power = max_energy_coordinates(power_level)
-        self.assertEqual(power, 29)
-        self.assertAlmostEqual(ind, (33, 45))
+        most_power_cell = max_energy(power_level)
+        self.assertEqual(most_power_cell.size, 3)
+        self.assertEqual(most_power_cell.power, 29)
+        self.assertEqual(most_power_cell.coordinates, (33, 45))
+
+
+
+class TestMaxPower(unittest.TestCase):
+   def test18(self):
+        power_level = grid(grid_serial_number=18, size=300)
+        most_power_cell = partII(power_level)
+        self.assertEqual(most_power_cell.coordinates, (90, 269))
+        self.assertEqual(most_power_cell.size, 16)
+        self.assertEqual(most_power_cell.power, 113)
+
+
+   def test119(self):
+        power_level = grid(grid_serial_number=42, size=300)
+        most_power_cell = partII(power_level)
+        self.assertEqual(most_power_cell.coordinates, (232, 251))
+        self.assertEqual(most_power_cell.size, 12)
+        self.assertEqual(most_power_cell.power, 119)

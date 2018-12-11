@@ -1,5 +1,11 @@
 import numpy as np
 from scipy import signal
+from tqdm import trange
+from collections import namedtuple
+
+
+Datum = namedtuple('Datum', ('coordinates', 'power', 'size'))
+
 
 def grid(grid_serial_number, size=300):
     grid_y, grid_x = np.meshgrid(range(size), range(size), indexing='ij')
@@ -23,7 +29,19 @@ def grid(grid_serial_number, size=300):
 
 
 
-def max_energy_coordinates(power_level):
-    f = signal.convolve2d(power_level, np.ones((3,3)), 'valid')
-    ind = np.unravel_index(np.argmax(f, axis=None), f.shape)
-    return (ind[0] + 1, ind[1] + 1), np.amax(f)
+def max_energy(power_level, size=3):
+    f = signal.convolve2d(power_level, np.ones((size,size)), 'valid')
+    coordinates = np.unravel_index(np.argmax(f, axis=None), f.shape)
+    coordinates = (coordinates[0]+1, coordinates[1]+1)
+    return Datum(coordinates, int(np.amax(f)), size)
+
+
+
+def partII(power_level):
+   most_power_cell = Datum((0,0), 0, 0)
+   for size in trange(1, 300+1):
+      most_power_cell = max(most_power_cell,
+            max_energy(power_level, size),
+            key=lambda x: x.power)
+
+   return most_power_cell
