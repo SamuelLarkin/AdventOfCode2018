@@ -22,6 +22,36 @@ test_data = '''
 test_data = test_data.split('\n')[1:-1]
 
 
+def finc_collision_location(track, carts):
+    cart_map = { c.p: c for c in carts }
+    for tick in range(2000):
+        carts = sorted(carts, key=lambda c: c.p)
+        print('carts:\n', '\n'.join(map(str, carts)), sep='')
+        for c in carts:
+            del(cart_map[c.p])
+            c.position += c.direction
+            t = track[c.position[0]][c.position[1]] 
+            if t in '/\\':
+                c.direction = corner[t](c.direction)
+            elif t == '+':
+                c.direction = intersection[c.next_move](c.direction)
+                c.next_move = (c.next_move + 1) % 3
+            elif t == ' ':
+                assert False
+            assert t in '+-|><v^/\\', t
+
+            # Check for collision and remove carts who collided.
+            if c.p in cart_map and cart_map[c.p]._alive:
+                c._alive = False
+                cart_map[c.p]._alive = False
+                return c.p
+            else:
+                cart_map[c.p] = c
+
+
+
+
+
 if __name__ == '__main__':
     with open('data.txt', 'r') as f:
         track, carts = parse(f)
@@ -34,27 +64,7 @@ if __name__ == '__main__':
     print('track:\n', '\n'.join(track), sep='')
     print('carts:', carts)
 
-    for tick in range(2000):
-        carts = sorted(carts, key=lambda c: c.p)
-        for c in carts:
-            c.position += c.direction
-            t = track[c.position[0]][c.position[1]] 
-            if t in '/\\':
-                c.direction = corner[t](c.direction)
-            elif t == '+':
-                c.direction = intersection[c.next_move](c.direction)
-                c.next_move = (c.next_move + 1) % 3
-            elif t == ' ':
-                assert False
-        print(tick)
-        if debug:
-            print('track:\n', '\n'.join(track), sep='')
-            print('carts:', carts)
-        collision = Counter(c.p for c in carts)
-        answer = collision.most_common(1)[0]
-        if answer[1] > 1:
-            answer = answer[0]
-            break
+    answer = finc_collision_location(track, carts)
 
 
     print('Answer:', answer)

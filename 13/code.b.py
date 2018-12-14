@@ -38,10 +38,12 @@ if __name__ == '__main__':
     print('carts:', '\n'.join(map(str,carts)), sep='')
 
     for tick in range(1,22000):
+        cart_map = { c.p: c for c in carts }
         carts = sorted(carts, key=lambda c: c.p)
         for c in carts:
             if not c._alive:
                 continue
+            del(cart_map[c.p])
             c.position += c.direction
             t = track[c.position[0]][c.position[1]] 
             if t in '/\\':
@@ -53,23 +55,19 @@ if __name__ == '__main__':
                 assert False
             assert t in '+-|><v^/\\', t
 
-            # COMMENT: we need to check for a collision after each cart moves.
-            # Let count the number of cart in one given location.
-            collision = Counter(c.p for c in carts)
-            # We want the locations where there are multiple carts
-            collision_position = list(map(lambda x: x[0], filter(lambda x: x[1]>1, collision.most_common())))
-            if len(collision_position) > 0:
-                # Collisions occurred, remove the carts.
-                print('Collision', tick, collision_position)
-                for cc in carts:
-                    if cc.p in collision_position:
-                        cc._alive = False
+            # Check for collision and remove carts who collided.
+            if c.p in cart_map and cart_map[c.p]._alive:
+                c._alive = False
+                cart_map[c.p]._alive = False
+            else:
+                cart_map[c.p] = c
+
 
         carts = list(filter(lambda x: x._alive, carts))
         print(tick)
         #if debug:
         #    print('track:\n', '\n'.join(track), sep='')
-        print('carts:', '\n'.join(map(str,carts)), sep='')
+        #print('carts:', '\n'.join(map(str,carts)), sep='')
 
 
         if len(carts) == 1:
