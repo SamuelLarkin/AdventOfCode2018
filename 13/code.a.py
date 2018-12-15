@@ -25,20 +25,9 @@ test_data = test_data.split('\n')[1:-1]
 def finc_collision_location(track, carts):
     cart_map = { c.p: c for c in carts }
     for tick in range(2000):
-        carts = sorted(carts, key=lambda c: c.p)
-        print('carts:\n', '\n'.join(map(str, carts)), sep='')
-        for c in carts:
+        for c in sorted(carts, key=lambda c: c.p):
             del(cart_map[c.p])
-            c.position += c.direction
-            t = track[c.position[0]][c.position[1]] 
-            if t in '/\\':
-                c.direction = corner[t](c.direction)
-            elif t == '+':
-                c.direction = intersection[c.next_move](c.direction)
-                c.next_move = (c.next_move + 1) % 3
-            elif t == ' ':
-                assert False
-            assert t in '+-|><v^/\\', t
+            c.move_on_track(track)
 
             # Check for collision and remove carts who collided.
             if c.p in cart_map and cart_map[c.p]._alive:

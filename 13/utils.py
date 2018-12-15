@@ -39,6 +39,19 @@ class Cart():
     def next_move(self, value):
         self._next_move = value
 
+    def move_on_track(self, track):
+        self.position += self.direction
+        t = track[self.position[0]][self.position[1]] 
+        if t in '/\\':
+            self.direction = corner[t](self.direction)
+        elif t == '+':
+            self.direction = intersection[self.next_move](self.direction)
+            self.next_move = (self.next_move + 1) % 3
+        elif t == ' ':
+            assert False
+        assert t in '+-|><v^/\\', t
+
+
     def __repr__(self):
         return 'Cart(position: {} direction: {} next_move: {})'.format(self.position, self.direction, self.next_move)
 

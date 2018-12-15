@@ -23,6 +23,39 @@ test_data = '''
 test_data = test_data.split('\n')[1:-1]
 
 
+def find_last_cart(track, carts):
+    tick = 0
+    cart_map = { c.p: c for c in carts }
+    while len(carts) > 1:
+        tick += 1
+        for c in sorted(carts, key=lambda c: c.p):
+            if not c._alive:
+                continue
+
+            del(cart_map[c.p])
+            c.move_on_track(track)
+
+            # Check for collision and remove carts who collided.
+            if c.p in cart_map and cart_map[c.p]._alive:
+                c._alive = False
+                cart_map[c.p]._alive = False
+                del(cart_map[c.p])
+            else:
+                cart_map[c.p] = c
+
+
+        carts = list(filter(lambda x: x._alive, carts))
+        #print(tick)
+        #if debug:
+        #    print('track:\n', '\n'.join(track), sep='')
+        #print('carts:', '\n'.join(map(str,carts)), sep='')
+
+    return carts[0]
+
+
+
+
+
 if __name__ == '__main__':
     with open('data.txt', 'r') as f:
         track, carts = parse(f)
@@ -35,44 +68,10 @@ if __name__ == '__main__':
     assert len(carts) % 2 == 1
     carts = sorted(carts, key=lambda c: c.p)
     print('track:\n', '\n'.join(track), sep='')
-    print('carts:', '\n'.join(map(str,carts)), sep='')
+    print('carts:', '\n'.join(map(str, carts)), sep='')
 
-    for tick in range(1,22000):
-        cart_map = { c.p: c for c in carts }
-        carts = sorted(carts, key=lambda c: c.p)
-        for c in carts:
-            if not c._alive:
-                continue
-            del(cart_map[c.p])
-            c.position += c.direction
-            t = track[c.position[0]][c.position[1]] 
-            if t in '/\\':
-                c.direction = corner[t](c.direction)
-            elif t == '+':
-                c.direction = intersection[c.next_move](c.direction)
-                c.next_move = (c.next_move + 1) % 3
-            elif t == ' ':
-                assert False
-            assert t in '+-|><v^/\\', t
-
-            # Check for collision and remove carts who collided.
-            if c.p in cart_map and cart_map[c.p]._alive:
-                c._alive = False
-                cart_map[c.p]._alive = False
-            else:
-                cart_map[c.p] = c
-
-
-        carts = list(filter(lambda x: x._alive, carts))
-        print(tick)
-        #if debug:
-        #    print('track:\n', '\n'.join(track), sep='')
-        #print('carts:', '\n'.join(map(str,carts)), sep='')
-
-
-        if len(carts) == 1:
-            answer = carts[0].p
-            break
+    cart = find_last_cart(track, carts)
+    answer = cart.p
 
     print(carts)
     print('Answer:', answer)
