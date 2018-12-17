@@ -30,6 +30,7 @@ def parse_data(filename='data.a.txt'):
     #After:  [2, 3, 4, 2]
     #
     possible_opcodes = defaultdict(lambda: set())
+    #possible_opcodes = [ set() for _ in range(16) ]
     with open('data.a.txt', 'r') as f:
         a = 0
         counts = [0] * 16
