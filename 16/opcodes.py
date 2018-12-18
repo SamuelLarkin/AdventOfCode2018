@@ -160,3 +160,9 @@ opcodes['eqrr'] = eqrr
 
 assert len(opcodes) == 16, len(opcodes)
 assert len(set(opcodes.values())) == 16, 'at least two opcodes have the same function.'
+
+op_id_to_name = list(opcodes.keys())
+print('op_id_to_name:', op_id_to_name)
+
+op_name_to_id = { op_name: i for i, op_name in enumerate(op_id_to_name) }
+print('op_name_to_id:', op_name_to_id)
