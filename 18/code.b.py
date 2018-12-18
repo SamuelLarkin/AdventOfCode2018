@@ -33,7 +33,7 @@ def find_repetition(iterable):
 
 
 def generator(acres):
-    for _ in range(10000):
+    for _ in range(1000):
         acres = convolve(acres)
         yield score(acres)
 
@@ -46,19 +46,25 @@ if __name__ == '__main__':
         acres = reader(f)
 
     previous_score = 0
+    serie_full = []
     for i, s in enumerate(generator(acres)):
+        serie_full.append(s)
         print(i, s, s-previous_score)
         previous_score = s
 
     future = 1000000000
-    start, serie = find_repetition(generator(acres))
+    #start, serie = find_repetition(generator(acres))
+    start = 839
+    serie = serie_full[start:866+1]
+    assert len(serie) == 28, len(serie)
     print(start, serie)
 
-    #assert serie[617] == serie2[(617 - 584) % len(serie2)], '{} {}'.format(serie[617], serie2[(617 - 584) % len(serie2)])
+    assert serie_full[950] == serie[(950 - start) % len(serie)], '{} {}'.format(serie_full[950], serie2[(950 - start) % len(serie)])
     answer = serie[(future - start) % len(serie)]
 
     print('Answer:', answer)
     # 236300  too high
+    # 711 too low
 
 
 '''
