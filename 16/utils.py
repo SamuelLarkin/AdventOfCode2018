@@ -30,6 +30,9 @@ def parse_data(filename='data.a.txt'):
     #After:  [2, 3, 4, 2]
     #
     possible_opcodes = defaultdict(lambda: set())
+    # Since we know in advance how many opcodes we have, we could use an array
+    # instead of a hash but that would imply changing  our
+    # perfect_matching_by_peeling() to work with array instead of hash.
     #possible_opcodes = [ set() for _ in range(16) ]
     with open('data.a.txt', 'r') as f:
         a = 0
