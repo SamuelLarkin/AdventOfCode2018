@@ -16,3 +16,6 @@ if __name__ == '__main__':
 
     computer.compute()
     print('Answer:', computer.registers[0])
+    # 1488
+    # 915 = 3 X 5 X 61
+    # 1488 = (3^0 + 2^1) X (5^0 + 5^1) X (61^0 + 61^1)
