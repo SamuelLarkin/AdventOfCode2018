@@ -16,7 +16,7 @@ if __name__ == '__main__':
         computer.load_instructions(f)
         assert len(computer.instructions) == 31
 
-    answer = 13970209
+    answer = 13970209   # D52B21
     computer.registers[0] = answer
     computer.compute()
     #print('Answer:', computer.registers[0])
