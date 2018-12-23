@@ -2,6 +2,7 @@ import unittest
 from nanobot import parse
 from nanobot import count_in_range
 from nanobot import best_coordinates
+from nanobot import mse
 
 
 test_data = '''
@@ -51,7 +52,13 @@ class TestNanobot(unittest.TestCase):
 
 
     def test_best_coordinates(self):
-        nanobots = parse(test_data)
-        coordinates = best_coordinates(nanobots)
+        nanobots = parse(test_data2)
+        num_in_range, distance, coordinates = best_coordinates(nanobots)
         self.assertListEqual(coordinates, [12,12,12])
-        self.assertEqual(best_coordinates(nanobots), 36)
+        self.assertEqual(distance, 36)
+        self.assertEqual(num_in_range, 5)
+
+
+    def test_mse(self):
+        nanobots = parse(test_data2)
+        mse(nanobots)
