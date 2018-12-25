@@ -96,6 +96,10 @@ class Army:
         self.groups.append(group)
 
 
+    def boost(self, boost):
+        self.boost = boost
+
+
     def target_selection(self, other_army):
         '''
         During the target selection phase, each group attempts to choose one
@@ -174,7 +178,9 @@ class Army:
 
 
     def prune(self):
+        a = len(self.groups)
         self.groups = list(filter(lambda g: g.num_units > 0, self.groups))
+        return a != len(self.groups)
 
 
     def score(self):
@@ -197,17 +203,18 @@ def combat(immune, infection):
             reverse=True):
         og.received(g.damage(og))
 
-    immune.prune()
-    infection.prune()
+    return immune.prune() or infection.prune()
 
 
 
-def parse_group(title, line):
+def parse_group(title, line, boost):
     '''
     4674 units each with 7617 hit points (immune to slashing, bludgeoning; weak to fire) with an attack that does 15 slashing damage at initiative 15
     2785 units each with 4474 hit points (weak to cold) with an attack that does 14 fire damage at initiative 20
     2702 units each with 10159 hit points with an attack that does 7 fire damage at initiative 7
     '''
+
+    boost = max(1, boost)
 
     desc = re.compile(r'(\d+) units each with (\d+) hit points(?: \((.+)\))? with an attack that does (\d+) (\w+) damage at initiative (\d+)')
     line = line.strip()
@@ -236,14 +243,14 @@ def parse_group(title, line):
             immune_to or frozenset(),
             weak_to or frozenset(),
             attack_type,
-            attack_damage,
+            attack_damage + boost,
             initiative)
 
     return g
 
 
 
-def parse_army(f):
+def parse_army(f, boost=1):
     f = iter(f)
     title = next(f)[:-1]
     army = Army(title)
@@ -251,14 +258,14 @@ def parse_army(f):
         l = l.strip()
         if l == '':
             break
-        army.append(parse_group(title, l))
+        army.append(parse_group(title, l, boost))
 
     return army
 
 
 
-def parse(f):
-    immune = parse_army(f)
+def parse(f, boost = 1):
+    immune = parse_army(f, boost)
     infection = parse_army(f)
 
     return immune, infection
